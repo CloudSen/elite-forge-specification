@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">  
+  <pluginGroups/>  
+  <proxies/>  
+  <profiles> 
+    <profile> 
+      <id>cisdi</id>  
+      <repositories> 
+        <repository> 
+          <id>cisdi-cloud</id>  
+          <url>http://nexus.cisdigital.cn/repository/maven-public/</url>  
+          <releases> 
+            <enabled>true</enabled> 
+          </releases>  
+          <snapshots> 
+            <enabled>true</enabled> 
+          </snapshots> 
+        </repository> 
+      </repositories>  
+      <pluginRepositories> 
+        <pluginRepository> 
+          <id>cisdi-cloud</id>  
+          <url>http://nexus.cisdigital.cn/repository/maven-public/</url>  
+          <releases> 
+            <enabled>true</enabled> 
+          </releases>  
+          <snapshots> 
+            <enabled>true</enabled> 
+          </snapshots> 
+        </pluginRepository> 
+      </pluginRepositories> 
+    </profile> 
+  </profiles>  
+  <activeProfiles> 
+    <activeProfile>cisdi</activeProfile> 
+  </activeProfiles>  
+  <servers> 
+    <server>
+      <id>cisdi-cloud</id>
+      <username>cisdi-deployer</username>
+      <password>s3bg3my5JGgFZi8v</password>
+    </server>
+  </servers> 
+</settings>

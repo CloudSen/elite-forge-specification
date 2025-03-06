@@ -2,6 +2,7 @@
 *.log
 *.log.tar.gz
 *.log.tar
+.tar.gz
 ### AI
 .cursorrules
 .continuerules

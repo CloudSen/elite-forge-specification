@@ -1,0 +1,70 @@
+import sys
+import re
+import subprocess
+import os
+
+# 提交信息格式正则
+COMMIT_MSG_PATTERN = r'^(feat|fix|test|refactor)\(#\d+\): .+|^(doc|build|style)(\(#\d+\))?: .+'
+MERGE_COMMIT_PATTERN = r'^Merge (branch|commit) .+'
+
+def print_error_message(commit_msg):
+    """打印错误信息"""
+    print(f"[ERROR] 提交信息格式错误！请使用以下格式(注意空格，必须用英文符号)：")
+    sys.exit(1)
+
+def fetch_target_branch():
+    """确保目标分支在本地可用"""
+    target_branch = os.getenv("CI_MERGE_REQUEST_TARGET_BRANCH_NAME", "main")
+    try:
+        # 强制拉取完整远程分支
+        subprocess.run(["git", "fetch", "--no-tags", "--update-head-ok", "origin", target_branch], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] 无法获取远程分支 {target_branch}: {e.stderr}")
+        sys.exit(1)
+
+def get_mr_commits():
+    """获取当前 MR 里的所有提交信息"""
+    target_branch = os.getenv("CI_MERGE_REQUEST_TARGET_BRANCH_NAME", "master")
+    source_branch = os.getenv("CI_COMMIT_REF_NAME", "HEAD")
+
+    # 强制拉取最新的分支
+    subprocess.run(["git", "fetch", "--no-tags", "--force", "origin", target_branch], check=True)
+    subprocess.run(["git", "fetch", "--no-tags", "--force", "origin", source_branch], check=True)
+    subprocess.run(["git", "reset", "--hard", f"origin/{source_branch}"], check=True)  # 强制同步
+
+    try:
+        result = subprocess.run(
+            ["git", "log", "--pretty=format:%s", f"origin/{target_branch}..origin/{source_branch}"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        commits = result.stdout.strip().split("\n")
+        return [commit for commit in commits if commit]
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] 无法获取 MR 提交记录: {e.stderr}")
+        sys.exit(1)
+
+def validate_commit_messages():
+    """检查 MR 里的所有提交信息是否符合规范"""
+    fetch_target_branch()
+    commits = get_mr_commits()
+
+    if len(commits) > 1:
+        print(f"[ERROR] 你有 {len(commits)} 个提交，必须合并为一个（squash）。")
+        sys.exit(1)
+
+    commit_msg = commits[0]
+
+    if re.match(MERGE_COMMIT_PATTERN, commit_msg):
+        print("[INFO] 跳过合并提交的校验。")
+        sys.exit(0)
+
+    if not re.match(COMMIT_MSG_PATTERN, commit_msg):
+        print_error_message(commit_msg)
+
+    print("[OK] 提交信息符合规范！")
+
+if __name__ == "__main__":
+    validate_commit_messages()
