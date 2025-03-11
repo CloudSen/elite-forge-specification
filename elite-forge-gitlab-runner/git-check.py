@@ -8,7 +8,7 @@ COMMIT_MSG_PATTERN = r'^(feat|fix|test|refactor)\(#\d+\): .+|^(doc|build|style)(
 MERGE_COMMIT_PATTERN = r'^Merge (branch|commit) .+'
 
 def print_error_message(commit_msg):
-  """打印错误信息，包含提交信息格式要求和示例"""
+    """打印错误信息，包含提交信息格式要求和示例"""
     print(f"[ERROR] 提交信息格式错误！请使用以下格式(注意空格，必须用英文符号)：")
     print(f"   [type](#需求id): 提交信息")
     print(f"""允许的 type:
