@@ -5,6 +5,8 @@ stages:
 # code-lint 阶段：运行 ./mvnw spotless:check 进行代码格式检查
 code-lint:
   stage: code-lint
+  tags:
+    - datakits
   image: hub-poseidon.cisdigital.cn/mirror/gitlab-ci-cd:1.0.0
   script:
     - ./mvnw spotless:check  # 检查代码格式
@@ -14,6 +16,8 @@ code-lint:
 # git-check 阶段：检查 commit-msg 和是否 squash
 git-check:
   stage: git-check
+  tags:
+    - datakits
   image: hub-poseidon.cisdigital.cn/mirror/gitlab-ci-cd:1.0.0
   before_script:
     - python3 -v
